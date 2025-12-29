@@ -14,7 +14,7 @@ export default defineConfig({
     ],
     server: {
         hmr: {
-            host: 'artmuseum.test',
+            host: 'art.sohojware.dev',
         },
         watch: {
             ignored: ['**/storage/framework/views/**'],
