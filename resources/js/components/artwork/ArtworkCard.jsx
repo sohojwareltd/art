@@ -55,7 +55,7 @@ export default function ArtworkCard({ artwork, index = 0 }) {
                 }}
                 className="block group touch-manipulation cursor-none"
             >
-                <div className="relative overflow-hidden bg-neutral-50 rounded-[10px]">
+                <div className="relative overflow-hidden bg-gradient-to-br from-[#8B3A42]/5 via-neutral-50 to-[#B8860B]/5 rounded-[10px] border border-[#8B3A42]/10 lg:bg-neutral-50 lg:border-0">
                     {artwork.image_url ? (
                         <motion.div 
                             className={`${aspectRatio} w-full relative overflow-hidden`}
@@ -68,7 +68,7 @@ export default function ArtworkCard({ artwork, index = 0 }) {
                                 className="absolute inset-0 w-full h-full object-cover"
                                 lazy
                             />
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 pointer-events-none z-20 flex flex-col justify-between p-4 md:p-6">
+                            <div className="absolute inset-0 bg-gradient-to-br from-[#8B3A42]/70 via-black/60 to-[#8B3A42]/70 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 pointer-events-none z-20 flex flex-col justify-between p-4 md:p-6 lg:bg-black/60">
                                 {/* Top Section - Title and Year */}
                                 <div className="space-y-1.5">
                                     <h3 className="text-base md:text-lg text-white font-serif font-normal leading-tight line-clamp-2 tracking-tight">

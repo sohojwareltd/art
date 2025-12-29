@@ -57,3 +57,4 @@ class ClearArtworkCache extends Command
 }
 
 
+
