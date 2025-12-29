@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Image from '../ui/Image';
 
 export default function ArtworkDetail({ artwork, onClose }) {
-    const { user } = useAuth();
+    const { user, checkAuth } = useAuth();
     const [isSaved, setIsSaved] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -56,6 +56,11 @@ export default function ArtworkDetail({ artwork, onClose }) {
             }
         } catch (error) {
             console.error('Error saving artwork:', error);
+            // If 401, re-check auth status
+            if (error.response?.status === 401) {
+                // Re-check auth to see if session expired
+                await checkAuth();
+            }
         } finally {
             setSaving(false);
         }

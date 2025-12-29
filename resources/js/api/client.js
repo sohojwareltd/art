@@ -15,7 +15,8 @@ client.interceptors.response.use(
         if (error.response?.status === 401) {
             const url = error.config?.url || '';
             // Don't redirect for /user endpoint (used for auth checking)
-            if (!url.includes('/user')) {
+            // Don't redirect for save/unsave operations - let them handle the error
+            if (!url.includes('/user') && !url.includes('/save')) {
                 window.location.href = '/';
             }
         }

@@ -151,7 +151,7 @@ export default function Home({ searchQuery = '' }) {
             <div className="hidden lg:block lg:w-[320px] xl:w-[400px] lg:flex-shrink-0" />
 
             {/* Right Content Area - Gallery */}
-            <section className="relative z-10 flex-1 lg:ml-0 px-4 sm:px-4 md:px-6 lg:px-8 xl:px-12 pb-8 sm:pb-4 pt-20 sm:pt-24 md:pt-20 lg:pt-12">
+            <section className="relative z-10 flex-1 lg:ml-0 px-4 sm:px-4 md:px-6 lg:px-8 xl:px-12 pb-8 sm:pb-4 pt-28 sm:pt-32 md:pt-28 lg:pt-12">
                 <GalleryGrid
                     artworks={artworks}
                     loading={isLoadingState || isFetchingMore}
