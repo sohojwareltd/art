@@ -637,11 +637,43 @@ class MetMuseumService
      */
     private function normalizeArtwork(array $data): array
     {
+        // Get original image URLs from API
         $originalImageUrl = $data['primaryImage'] ?? $data['primaryImageSmall'] ?? null;
-        $imageUrl = $originalImageUrl ? $this->imageCacheService->getCachedImageUrl($originalImageUrl) : null;
-        
         $originalSmallUrl = $data['primaryImageSmall'] ?? null;
-        $smallUrl = $originalSmallUrl ? $this->imageCacheService->getCachedImageUrl($originalSmallUrl) : null;
+        
+        // Try to get cached URLs, but always fall back to original if anything fails
+        $imageUrl = null;
+        $smallUrl = null;
+        
+        if ($originalImageUrl) {
+            try {
+                $cachedUrl = $this->imageCacheService->getCachedImageUrl($originalImageUrl);
+                $imageUrl = !empty($cachedUrl) ? $cachedUrl : $originalImageUrl;
+            } catch (\Exception $e) {
+                Log::warning('Error getting cached image URL, using original', [
+                    'error' => $e->getMessage(),
+                    'original_url' => $originalImageUrl,
+                ]);
+                $imageUrl = $originalImageUrl;
+            }
+        }
+        
+        if ($originalSmallUrl) {
+            try {
+                $cachedSmallUrl = $this->imageCacheService->getCachedImageUrl($originalSmallUrl);
+                $smallUrl = !empty($cachedSmallUrl) ? $cachedSmallUrl : $originalSmallUrl;
+            } catch (\Exception $e) {
+                Log::warning('Error getting cached small image URL, using original', [
+                    'error' => $e->getMessage(),
+                    'original_url' => $originalSmallUrl,
+                ]);
+                $smallUrl = $originalSmallUrl;
+            }
+        }
+        
+        // Ensure we always have at least the original URLs
+        $finalImageUrl = $imageUrl ?? $originalImageUrl;
+        $finalSmallUrl = $smallUrl ?? $originalSmallUrl;
         
         return [
             'id' => (string) ($data['objectID'] ?? ''),
@@ -661,9 +693,9 @@ class MetMuseumService
             'portfolio' => $data['portfolio'] ?? null,
             'artist_role' => $data['artistRole'] ?? null,
             'artist_display_bio' => $data['artistDisplayBio'] ?? null,
-            'image_url' => $imageUrl ?? $originalImageUrl,
-            'image_url_small' => $smallUrl ?? $originalSmallUrl,
-            'image_url_large' => $imageUrl ?? $originalImageUrl,
+            'image_url' => $finalImageUrl,
+            'image_url_small' => $finalSmallUrl,
+            'image_url_large' => $finalImageUrl,
             'additional_images' => $data['additionalImages'] ?? [],
             'repository' => 'The Metropolitan Museum of Art',
             'repository_url' => $data['objectURL'] ?? null,

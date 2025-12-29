@@ -23,13 +23,31 @@ class ImageCacheService
             return null;
         }
 
-        $cacheKey = $this->getCacheKey($externalUrl);
-        $cachePath = self::CACHE_DIR . '/' . $cacheKey;
-        
-        // Check if image is already cached
-        if (Storage::disk('public')->exists($cachePath)) {
-            $url = Storage::disk('public')->url($cachePath);
-            return $url ?: $externalUrl;
+        try {
+            $cacheKey = $this->getCacheKey($externalUrl);
+            $cachePath = self::CACHE_DIR . '/' . $cacheKey;
+            
+            // Check if image is already cached
+            if (Storage::disk('public')->exists($cachePath)) {
+                $url = Storage::disk('public')->url($cachePath);
+                
+                // If URL generation fails or returns empty, fall back to original
+                if (empty($url)) {
+                    Log::warning('Failed to generate cached image URL, using original', [
+                        'cache_path' => $cachePath,
+                        'original_url' => $externalUrl,
+                    ]);
+                    return $externalUrl;
+                }
+                
+                return $url;
+            }
+        } catch (\Exception $e) {
+            // If any error occurs, log it and return original URL
+            Log::warning('Error checking cached image URL, using original', [
+                'error' => $e->getMessage(),
+                'original_url' => $externalUrl,
+            ]);
         }
 
         // Return original URL - images will be cached on-demand or via background job
