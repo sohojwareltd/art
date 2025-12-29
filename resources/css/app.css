@@ -22,15 +22,17 @@
         overflow-x: hidden;
     }
     
-    /* Hide default cursor on desktop only */
+    /* Hide default cursor on desktop only (non-touch devices) */
     @media (min-width: 1024px) {
-        body, * {
-            cursor: none !important;
-        }
-        
-        /* Show pointer cursor for interactive elements (cursor follower will handle visual) */
-        a, button, [role="button"], [class*="group"] {
-            cursor: none !important;
+        @media (hover: hover) and (pointer: fine) {
+            body, * {
+                cursor: none !important;
+            }
+            
+            /* Show pointer cursor for interactive elements (cursor follower will handle visual) */
+            a, button, [role="button"], [class*="group"] {
+                cursor: none !important;
+            }
         }
     }
     

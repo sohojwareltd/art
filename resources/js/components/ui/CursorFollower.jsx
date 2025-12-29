@@ -3,13 +3,31 @@ import { useEffect, useState, useRef } from 'react';
 export default function CursorFollower() {
     const [isHovering, setIsHovering] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const [isTouchDevice, setIsTouchDevice] = useState(false);
     const cursorRef = useRef(null);
     const outerRingRef = useRef(null);
     const rafId = useRef(null);
     const mousePos = useRef({ x: 0, y: 0 });
     const cursorPos = useRef({ x: 0, y: 0 });
 
+    // Detect touch devices
     useEffect(() => {
+        const checkTouchDevice = () => {
+            return (
+                'ontouchstart' in window ||
+                navigator.maxTouchPoints > 0 ||
+                (navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0)
+            );
+        };
+        
+        setIsTouchDevice(checkTouchDevice());
+    }, []);
+
+    useEffect(() => {
+        // Don't initialize cursor follower on touch devices
+        if (isTouchDevice) {
+            return;
+        }
         const updateCursor = () => {
             // Smooth interpolation for cursor following (easing factor)
             cursorPos.current.x += (mousePos.current.x - cursorPos.current.x) * 0.15;
@@ -84,7 +102,12 @@ export default function CursorFollower() {
                 cancelAnimationFrame(rafId.current);
             }
         };
-    }, [isVisible]);
+    }, [isVisible, isTouchDevice]);
+
+    // Don't render on touch devices
+    if (isTouchDevice) {
+        return null;
+    }
 
     return (
         <>

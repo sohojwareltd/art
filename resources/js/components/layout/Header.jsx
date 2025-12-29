@@ -50,8 +50,8 @@ export default function Header({ searchQuery, onSearchChange }) {
         <>
             <header className="fixed top-0 left-0 right-0 z-50 bg-[#FAFAF9] border-b border-neutral-200/30">
                 <div className="max-w-[1800px] mx-auto px-4 sm:px-6 md:px-12 py-6 md:py-6">
-                    {/* Mobile Layout */}
-                    <div className="flex md:hidden flex-col gap-4">
+                    {/* Mobile Layout - Only show on small screens, not tablet */}
+                    <div className="flex lg:hidden flex-col gap-4">
                         <div className="flex items-center justify-between">
                             <Link 
                                 to="/" 
@@ -89,8 +89,8 @@ export default function Header({ searchQuery, onSearchChange }) {
                         )}
                     </div>
 
-                    {/* Desktop Layout */}
-                    <div className="hidden md:grid md:grid-cols-3 items-center gap-4">
+                    {/* Desktop/Tablet Layout */}
+                    <div className="hidden lg:grid lg:grid-cols-3 items-center gap-4">
                         <Link to="/" className="text-2xl font-serif text-[#0A0A0A] hover:opacity-70 transition-opacity justify-self-start">
                             Art Museum
                         </Link>
@@ -147,7 +147,7 @@ export default function Header({ searchQuery, onSearchChange }) {
             {showMobileDrawer && (
                 <div
                     id="mobile-drawer-overlay"
-                    className="fixed inset-0 bg-black/50 z-50 md:hidden transition-opacity duration-300"
+                    className="fixed inset-0 bg-black/50 z-50 lg:hidden transition-opacity duration-300"
                     onClick={() => setShowMobileDrawer(false)}
                 />
             )}
@@ -155,7 +155,7 @@ export default function Header({ searchQuery, onSearchChange }) {
             {/* Mobile Drawer */}
             <aside
                 id="mobile-drawer"
-                className={`fixed top-0 left-0 h-full w-[320px] max-w-[85vw] bg-white border-r border-neutral-200 z-50 md:hidden transform transition-transform duration-300 ease-out ${
+                className={`fixed top-0 left-0 h-full w-[320px] max-w-[85vw] bg-white border-r border-neutral-200 z-50 lg:hidden transform transition-transform duration-300 ease-out ${
                     showMobileDrawer ? 'translate-x-0' : '-translate-x-full'
                 }`}
             >
