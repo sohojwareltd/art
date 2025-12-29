@@ -9,7 +9,7 @@ export default function GalleryGrid({ artworks, loading, hasMore, onLoadMore }) 
 
     // Parallax scroll speeds for each column - more noticeable varying speeds
     // Adjusted for 5 columns (desktop with sidebar)
-    const columnSpeeds = [20, 28, 18, 20, 28];
+    const columnSpeeds = [12, 18, 8, 20, 15];
 
     // Detect mobile/tablet
     useEffect(() => {
