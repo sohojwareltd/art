@@ -7,8 +7,9 @@ export default function GalleryGrid({ artworks, loading, hasMore, onLoadMore }) 
     const [scrollProgress, setScrollProgress] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
 
-    // Parallax scroll speeds for each column (different speeds)
-    const columnSpeeds = [0.3, 0.5, 0.2, 0.6, 0.4, 0.35];
+    // Parallax scroll speeds for each column - more noticeable varying speeds
+    // Adjusted for 5 columns (desktop with sidebar)
+    const columnSpeeds = [12, 18, 8, 20, 15];
 
     // Detect mobile/tablet
     useEffect(() => {
@@ -28,24 +29,40 @@ export default function GalleryGrid({ artworks, loading, hasMore, onLoadMore }) 
             return;
         }
 
+        let rafId = null;
         const handleScroll = () => {
-            if (containerRef.current) {
-                const container = containerRef.current;
-                const containerTop = container.getBoundingClientRect().top;
-                const viewportHeight = window.innerHeight;
-                
-                // Calculate progress when container is in viewport
-                if (containerTop < viewportHeight && containerTop > -container.offsetHeight) {
-                    const progress = (viewportHeight - containerTop) / (viewportHeight + container.offsetHeight);
-                    setScrollProgress(Math.max(0, Math.min(1, progress)));
-                }
+            if (rafId) {
+                cancelAnimationFrame(rafId);
             }
+            
+            rafId = requestAnimationFrame(() => {
+                if (containerRef.current) {
+                    const container = containerRef.current;
+                    const containerTop = container.getBoundingClientRect().top;
+                    const viewportHeight = window.innerHeight;
+                    
+                    // Calculate progress when container is in viewport
+                    if (containerTop < viewportHeight && containerTop > -container.offsetHeight) {
+                        const progress = (viewportHeight - containerTop) / (viewportHeight + container.offsetHeight);
+                        setScrollProgress(Math.max(0, Math.min(1, progress)));
+                    } else if (containerTop >= viewportHeight) {
+                        setScrollProgress(0);
+                    } else {
+                        setScrollProgress(1);
+                    }
+                }
+            });
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
         handleScroll(); // Initial calculation
         
-        return () => window.removeEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+            }
+        };
     }, [artworks.length, isMobile]);
 
     useEffect(() => {
@@ -82,14 +99,14 @@ export default function GalleryGrid({ artworks, loading, hasMore, onLoadMore }) 
     }
 
     // Responsive column distribution
-    // Desktop: 6 columns, Tablet: 3 columns, Mobile: 2 columns
+    // Desktop with sidebar: 5 columns, Tablet: 3 columns, Mobile: 2 columns
     const getColumnCount = () => {
         if (typeof window !== 'undefined') {
-            if (window.innerWidth >= 1024) return 6;
+            if (window.innerWidth >= 1024) return 5; // Reduced for sidebar layout
             if (window.innerWidth >= 768) return 3;
-            return 2;
+            return 2; // Mobile: 2 columns for 2x2 grid effect
         }
-        return 6;
+        return 5;
     };
 
     const columnCount = getColumnCount();
@@ -100,14 +117,16 @@ export default function GalleryGrid({ artworks, loading, hasMore, onLoadMore }) 
     });
 
     // Calculate parallax distance based on scroll progress (desktop only)
-    const parallaxMultiplier = isMobile ? 0 : 200;
+    // Balanced multiplier for noticeable effect while controlling height
+    const parallaxMultiplier = isMobile ? 0 : 60;
     
     return (
         <>
-            <div ref={containerRef} className="relative">
+            <div ref={containerRef} className="relative overflow-hidden">
                 <div className="artwork-grid">
                     {columns.map((columnArtworks, columnIndex) => {
                         // Calculate parallax offset - each column moves at different speed (desktop only)
+                        // Only apply transform when scrolling, not at initial position
                         const parallaxOffset = isMobile 
                             ? 0 
                             : scrollProgress * parallaxMultiplier * (columnSpeeds[columnIndex] || 0.4);
@@ -117,7 +136,9 @@ export default function GalleryGrid({ artworks, loading, hasMore, onLoadMore }) 
                                 key={columnIndex}
                                 className="artwork-column"
                                 style={{
-                                    transform: isMobile ? 'none' : `translate3d(0, ${parallaxOffset}px, 0)`,
+                                    transform: isMobile || parallaxOffset === 0 
+                                        ? 'none' 
+                                        : `translate3d(0, ${parallaxOffset}px, 0)`,
                                     willChange: isMobile ? 'auto' : 'transform',
                                 }}
                             >

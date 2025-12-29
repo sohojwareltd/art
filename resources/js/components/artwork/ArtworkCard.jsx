@@ -53,9 +53,9 @@ export default function ArtworkCard({ artwork, index = 0 }) {
                     // Save scroll position before navigating
                     sessionStorage.setItem('artworkScrollPosition', window.scrollY.toString());
                 }}
-                className="block group touch-manipulation"
+                className="block group touch-manipulation cursor-none"
             >
-                <div className="relative overflow-hidden bg-neutral-50 mb-4 md:mb-6">
+                <div className="relative overflow-hidden bg-neutral-50 rounded-[10px]">
                     {artwork.image_url ? (
                         <motion.div 
                             className={`${aspectRatio} w-full relative overflow-hidden`}
@@ -68,18 +68,27 @@ export default function ArtworkCard({ artwork, index = 0 }) {
                                 className="absolute inset-0 w-full h-full object-cover"
                                 lazy
                             />
-                            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 flex items-end p-4 md:p-6 pointer-events-none z-20">
-                                <div className="space-y-1 md:space-y-2 w-full">
-                                    <p className="text-xs md:text-sm text-white font-light line-clamp-2">
+                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-opacity duration-300 pointer-events-none z-20 flex flex-col justify-between p-4 md:p-6">
+                                {/* Top Section - Title and Year */}
+                                <div className="space-y-1.5">
+                                    <h3 className="text-base md:text-lg text-white font-serif font-normal leading-tight line-clamp-2 tracking-tight">
                                         {artwork.title}
-                                    </p>
-                                    {artwork.artist && artwork.artist !== 'Unknown Artist' && (
-                                        <p className="text-[10px] md:text-xs text-white/90 uppercase tracking-wider line-clamp-1">
-                                            {artwork.artist}
-                                            {artwork.date && `, ${artwork.date}`}
+                                    </h3>
+                                    {artwork.date && (
+                                        <p className="text-sm md:text-base text-white/70 font-serif font-normal tracking-tight">
+                                            {artwork.date}
                                         </p>
                                     )}
                                 </div>
+
+                                {/* Bottom Section - Category/Medium */}
+                                {artwork.medium && (
+                                    <div className="self-start">
+                                        <p className="text-xs md:text-sm text-white/80 font-serif font-normal tracking-tight">
+                                            {artwork.medium}
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </motion.div>
                     ) : (

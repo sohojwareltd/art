@@ -132,3 +132,4 @@ A production-ready art browsing platform built with Laravel 12 (API) and React (
 - Responsive design (desktop-first approach)
 - No mock data - all data comes from Met Museum API
 
+
